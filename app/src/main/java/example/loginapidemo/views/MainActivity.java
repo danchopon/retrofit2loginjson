@@ -2,79 +2,50 @@ package example.loginapidemo.views;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import example.loginapidemo.R;
-import example.loginapidemo.models.Message;
-import example.loginapidemo.models.User;
-import example.loginapidemo.services.ApiClient;
-import example.loginapidemo.services.ApiService;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText etUserName;
-    EditText etPassword;
-    Button btnLogin;
 
-    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initUI();
-    }
-
-    void initUI() {
-        etUserName = (EditText) findViewById(R.id.etUserName);
-        etPassword = (EditText) findViewById(R.id.etPassword);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String username = etUserName.getText().toString();
-                String password = etPassword.getText().toString();
-
-                user = new User(username, password);
-                Gson gson = new Gson();
-                String json = gson.toJson(user);
-
-                RequestBody jsonString = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString());
-
-                ApiService getResponse = ApiClient.getClient().create(ApiService.class);
-                Call<Message> call = getResponse.login(jsonString);
-                try {
-                    call.enqueue(new Callback<Message>() {
-                        @Override
-                        public void onResponse(Call<Message> call, Response<Message> response) {
-                            Message message = response.body();
-                            if (message != null) {
-                                Toast.makeText(getApplicationContext(), message.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Message> call, Throwable t) {
-                            Toast.makeText(MainActivity.this, "Fail", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } catch (Exception e) {
-                    Log.d("Crash", "onClick: " + e.toString());
-                }
-            }
-        });
 
     }
+
+//    ScheduledExecutorService executor = Executors.newScheduledThreadPool ( 1 );
+//
+//    Runnable r = new Runnable () {
+//        @Override
+//        public void run () {
+//            try {  // Always wrap your Runnable with a try-catch as any uncaught Exception causes the ScheduledExecutorService to silently terminate.
+//                System.out.println ( "Now: " + Instant.now () );  // Our task at hand in this example: Capturing the current moment in UTC.
+//                if ( Boolean.FALSE ) {  // Add your Boolean test here to see if the external task is fonud to be completed, as described in this Question.
+//                    executor.shutdown ();  // 'shutdown' politely asks ScheduledExecutorService to terminate after previously submitted tasks are executed.
+//                }
+//
+//            } catch ( Exception e ) {
+//                System.out.println ( "Oops, uncaught Exception surfaced at Runnable in ScheduledExecutorService." );
+//            }
+//        }
+//    };
+//
+//    try {
+//        executor.scheduleAtFixedRate ( r , 0L , 5L , TimeUnit.SECONDS ); // ( runnable , initialDelay , period , TimeUnit )
+//        Thread.sleep ( TimeUnit.MINUTES.toMillis ( 1L ) ); // Let things run a minute to witness the background thread working.
+//    } catch ( InterruptedException ex ) {
+//        Logger.getLogger ( App.class.getName () ).log ( Level.SEVERE , null , ex );
+//    } finally {
+//        System.out.println ( "ScheduledExecutorService expiring. Politely asking ScheduledExecutorService to terminate after previously submitted tasks are executed." );
+//        executor.shutdown ();
+//    }
 }
