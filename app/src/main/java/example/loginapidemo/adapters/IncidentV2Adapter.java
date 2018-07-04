@@ -28,8 +28,8 @@ public class IncidentV2Adapter extends RecyclerView.Adapter<IncidentV2Adapter.In
 
     @Override
     public void onBindViewHolder(IncidentV2ViewHolder holder, int position) {
-        holder.txtIncV2Number.setText(dataList.get(position).getNumber());
         holder.txtIncV2Address.setText(dataList.get(position).getAddress());
+        holder.txtIncV2BattalionId.setText(dataList.get(position).getBattalionId());
     }
 
     @Override
@@ -39,12 +39,12 @@ public class IncidentV2Adapter extends RecyclerView.Adapter<IncidentV2Adapter.In
 
     class IncidentV2ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtIncV2Number, txtIncV2Address;
+        TextView txtIncV2Address, txtIncV2BattalionId;
 
         IncidentV2ViewHolder(View itemView) {
             super(itemView);
-            txtIncV2Number = (TextView) itemView.findViewById(R.id.txt_incidentV2_number);
             txtIncV2Address = (TextView) itemView.findViewById(R.id.txt_incidentV2_address);
+            txtIncV2BattalionId = (TextView) itemView.findViewById(R.id.txt_incidentV2_battalionId);
         }
     }
 }

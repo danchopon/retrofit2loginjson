@@ -1,5 +1,6 @@
 package example.loginapidemo.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 
 import example.loginapidemo.R;
 import example.loginapidemo.models.User;
+import example.loginapidemo.services.ApiClient;
 import example.loginapidemo.services.UserClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,7 +21,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class LoginActivity extends AppCompatActivity {
     EditText etUserName;
     EditText etPassword;
-    Button btnLogin;
 
     User user;
 
@@ -27,7 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-//        initUI();
 
         etUserName = (EditText) findViewById(R.id.etUserName);
         etPassword = (EditText) findViewById(R.id.etPassword);
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
         //Create Retrofit instance
         Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl("http://192.168.137.98:8080/")
+                .baseUrl(ApiClient.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create());
 
         Retrofit retrofit = builder.build();
@@ -60,17 +60,18 @@ public class LoginActivity extends AppCompatActivity {
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                Log.d("me", "duhudh = "+response.body());
-                Toast.makeText(LoginActivity.this, "Welcome"+response.body().getUsername(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Welcome "+response.body().getUsername(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LoginActivity.this, IncidentV2ListActivity.class);
+                intent.putExtra("battalionId", response.body().getBattalionId().toString());
+                startActivity(intent);
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                Log.d("me", "errow = " + t.getMessage().toString());
-
-                Toast.makeText(LoginActivity.this, "something went wrong" + t.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Something went wrong: " + t.getMessage().toString(), Toast.LENGTH_SHORT).show();
             }
         });
-
     }
+
+
 }

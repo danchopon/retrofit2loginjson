@@ -5,21 +5,21 @@ import com.google.gson.annotations.SerializedName;
 
 public class UserResponse {
 
-
-    
-
     @SerializedName("username")
     @Expose
     private String username;
     @SerializedName("password")
     @Expose
     private String password;
+    @SerializedName("battalionId")
+    @Expose
+    private String battalionId;
 
-    public String getUserName() {
+    public String getUsername() {
         return username;
     }
 
-    public void setUserName(String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
@@ -31,4 +31,11 @@ public class UserResponse {
         this.password = password;
     }
 
+    public String getBattalionId() {
+        return battalionId;
+    }
+
+    public void setBattalionId(String battalionId) {
+        this.battalionId = battalionId;
+    }
 }

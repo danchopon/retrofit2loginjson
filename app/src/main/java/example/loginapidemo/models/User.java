@@ -2,16 +2,23 @@ package example.loginapidemo.models;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by nam on 31/03/2017.
- */
-
 public class User {
 
     @SerializedName("username")
     public String username;
     @SerializedName("password")
     public String password;
+    @SerializedName("battalionId")
+    public String battalionId;
+
+    public User(String username, String password){
+        this.username = username;
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 
     public void setUsername(String username) {
         this.username = username;
@@ -25,12 +32,11 @@ public class User {
         this.password = password;
     }
 
-    public User(String username, String password){
-        this.username = username;
-        this.password = password;
+    public String getBattalionId() {
+        return battalionId;
     }
 
-    public String getUsername() {
-        return username;
+    public void setBattalionId(String battalionId) {
+        this.battalionId = battalionId;
     }
 }
