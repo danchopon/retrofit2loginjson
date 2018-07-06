@@ -9,16 +9,87 @@
         android:layout_height="406dp">
 
         <TextView
-            android:id="@+id/id_inc"
+            android:id="@+id/incidentV2_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="83dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/colorBlack"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/user_battalion_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/colorBlack"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/latitude"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="158dp"
-            android:text="@string/city"
+            android:layout_marginTop="135dp"
+            android:layout_marginLeft="10dp"
             android:textColor="@color/colorBlack"
             android:textSize="18dp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/longitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="170dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/colorBlack"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="200dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/colorBlack"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="70dp"
+                android:gravity="center"
+                android:onClick="onClick"
+                android:text="Button" />
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="Button" />
+        </LinearLayout>
+
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
