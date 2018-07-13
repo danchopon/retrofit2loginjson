@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +37,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
 
         holder.txtIncV2Address.setText(incidentV2List.get(position).getAddress());
         holder.txtIncV2BattalionId.setText(incidentV2List.get(position).getBattalionId());
+        holder.txtIncV2Number.setText(incidentV2List.get(position).getNumber());
 
         holder.parentLayout.setOnClickListener((view) -> {
 
@@ -45,7 +45,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("incidentV2Id", incidentV2List.get(position).getIncidentV2Id());
             intent.putExtra("battalionId", incidentV2List.get(position).getBattalionId());
+            intent.putExtra("number", incidentV2List.get(position).getNumber());
+            intent.putExtra("address", incidentV2List.get(position).getAddress());
             mContext.startActivity(intent);
+
         });
     }
 
@@ -56,13 +59,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtIncV2Address, txtIncV2BattalionId;
+        TextView txtIncV2Address, txtIncV2BattalionId, txtIncV2Number;
         CardView parentLayout;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             txtIncV2Address = (TextView) itemView.findViewById(R.id.txt_incidentV2_address);
             txtIncV2BattalionId = (TextView) itemView.findViewById(R.id.txt_incidentV2_battalionId);
+            txtIncV2Number = (TextView) itemView.findViewById(R.id.txt_incidentV2_number);
             parentLayout = (CardView) itemView.findViewById(R.id.parent_layout);
         }
     }

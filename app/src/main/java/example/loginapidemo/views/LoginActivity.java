@@ -3,10 +3,13 @@ package example.loginapidemo.views;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import example.loginapidemo.R;
 import example.loginapidemo.models.User;
@@ -29,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         etUserName = (EditText) findViewById(R.id.etUserName);
         etPassword = (EditText) findViewById(R.id.etPassword);
 
@@ -42,25 +46,24 @@ public class LoginActivity extends AppCompatActivity {
 
             sendNetworkRequest(user);
         });
+
     }
 
     private void sendNetworkRequest(User user) {
 
-        //Create Retrofit instance
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(ApiClient.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create());
 
         Retrofit retrofit = builder.build();
 
-        // get client & call object for the request
         UserClient client = retrofit.create(UserClient.class);
         Call<User> call = client.loginUser(user);
 
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                Toast.makeText(LoginActivity.this, "Welcome "+response.body().getUsername(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Welcome, " + response.body().getUsername(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LoginActivity.this, IncidentV2ListActivity.class);
                 intent.putExtra("battalionId", response.body().getBattalionId().toString());
                 startActivity(intent);
@@ -72,6 +75,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
 
 }

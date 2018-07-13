@@ -26,6 +26,9 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import example.loginapidemo.R;
 import example.loginapidemo.models.LocationModel;
@@ -37,7 +40,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class IncidentV2Activity extends AppCompatActivity implements LocationListener, View.OnClickListener {
+public class IncidentV2Activity extends AppCompatActivity implements LocationListener {
 
     private static final String TAG = "IncidentV2Activity";
     private TextView latitudePosition;
@@ -46,14 +49,15 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
     private LocationManager locationManager;
     private Location location;
     private final int REQUEST_LOCATION = 200;
-    private Button button1;
-    private Button button2;
-//    private Button locationSendButton;
-    private boolean status;
 
     private TextView incV2Id;
     private TextView battId;
-    LocationModel locationModel;
+    private TextView incV2Number;
+    private TextView incV2Address;
+
+    private Button startButton;
+    private Button finishButton;
+    private TextView taskFinished;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +70,9 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
         currentCity = (TextView) findViewById(R.id.city);
         locationManager = (LocationManager) getSystemService(Service.LOCATION_SERVICE);
 //        locationSendButton = (Button) findViewById(R.id.button_location_send);
+
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+
 
         if(ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED &&ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)!=PackageManager.PERMISSION_GRANTED)
 
@@ -93,16 +100,72 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
             showGPSDisabledAlertToUser();
         }
 
+        startButton = (Button) findViewById(R.id.startTask);
+        finishButton = (Button) findViewById(R.id.finishTask);
+        taskFinished = (TextView) findViewById(R.id.taskFinished);
 
-//        locationSendButton.setOnClickListener((view) -> {
-//            locationModel = new LocationModel(
-//                    incidentV2Id,
-//                    userBattalionId,
-//                    latitude,
-//                    longitude,
-//                    status
-//            );
-//        });
+        startButton.setVisibility(View.VISIBLE);
+        finishButton.setVisibility(View.GONE);
+        taskFinished.setVisibility(View.GONE);
+
+        startButton.setOnClickListener((view) -> {
+
+            Log.d(TAG, "onLocationChanged: " + incV2Id.getText());
+
+            LocationModel firstRequest = new LocationModel(battId.getText().toString(),Integer.parseInt(incV2Id.getText().toString())
+                    ,latitudePosition.getText().toString(),longitudePosition.getText().toString(),false);
+            sendNetworkRequest(firstRequest);
+
+            startButton.setVisibility(View.GONE);
+            finishButton.setVisibility(View.VISIBLE);
+
+            exec.scheduleAtFixedRate(new Runnable() {
+                @Override
+                public void run() {
+                    LocationModel request = new LocationModel(Integer.parseInt(incV2Id.getText().toString())
+                            ,latitudePosition.getText().toString(),longitudePosition.getText().toString(),false);
+
+                    Retrofit.Builder builder = new Retrofit.Builder()
+                            .baseUrl(ApiClient.BASE_URL)
+                            .addConverterFactory(GsonConverterFactory.create());
+
+                    Retrofit retrofit = builder.build();
+
+                    IncidentV2Service client = retrofit.create(IncidentV2Service.class);
+                    Call<LocationModel> call = client.createLocation(request);
+
+                    call.enqueue(new Callback<LocationModel>() {
+                        @Override
+                        public void onResponse(Call<LocationModel> call, Response<LocationModel> response) {
+
+                            Log.d(TAG, "onResponse: " + response.message());
+                            Log.d(TAG, "onResponse: " + response.body().getLocationId());
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<LocationModel> call, Throwable t) {
+                            Toast.makeText(IncidentV2Activity.this, "Something went wrong: " + t.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }, 0, 5, TimeUnit.MINUTES);
+
+        });
+
+        finishButton.setOnClickListener((view) -> {
+
+            Log.d(TAG, "onLocationChanged: " + incV2Id.getText());
+
+            LocationModel lastRequest = new LocationModel(battId.getText().toString(),Integer.parseInt(incV2Id.getText().toString())
+                    ,latitudePosition.getText().toString(),longitudePosition.getText().toString(),true);
+            sendNetworkRequest(lastRequest);
+
+            finishButton.setVisibility(View.GONE);
+            taskFinished.setVisibility(View.VISIBLE);
+
+            exec.shutdown();
+        });
     }
 
     private void getIncomingIntent() {
@@ -111,19 +174,27 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
 
             int incidentV2Id = getIntent().getIntExtra("incidentV2Id", 0);
             String userBattalionId = getIntent().getStringExtra("battalionId");
+            String incidentV2Number = getIntent().getStringExtra("number");
+            String incidentV2Address = getIntent().getStringExtra("address");
 
-            setId(incidentV2Id, userBattalionId);
+            setId(incidentV2Id, userBattalionId, incidentV2Number, incidentV2Address);
 
         }
     }
 
-    private void setId(int incidentV2Id, String userBattalionId) {
+    private void setId(int incidentV2Id, String userBattalionId, String incidentV2Number, String incidentV2Address) {
 
         incV2Id = (TextView) findViewById(R.id.incidentV2_id);
         incV2Id.setText("" + incidentV2Id);
 
         battId = (TextView) findViewById(R.id.user_battalion_id);
         battId.setText("" + userBattalionId);
+
+        incV2Number = (TextView) findViewById(R.id.incidentV2_number);
+        incV2Number.setText("" + incidentV2Number);
+
+        incV2Address = (TextView) findViewById(R.id.incidentV2_address);
+        incV2Address.setText(""+ incidentV2Address);
 
     }
 
@@ -132,8 +203,8 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
         latitudePosition.setText(String.valueOf(location.getLatitude()));
         longitudePosition.setText(String.valueOf(location.getLongitude()));
         getAddressFromLocation(location, getApplicationContext(), new IncidentV2Activity.GeoCoderHandler());
-        //Create Retrofit instance
-        LocationModel locat2 = new LocationModel(battId.getText().toString(),Integer.parseInt(incV2Id.getText().toString())
+
+        LocationModel request = new LocationModel(Integer.parseInt(incV2Id.getText().toString())
                 ,latitudePosition.getText().toString(),longitudePosition.getText().toString(),false);
 
         Retrofit.Builder builder = new Retrofit.Builder()
@@ -142,9 +213,8 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
 
         Retrofit retrofit = builder.build();
 
-        // get client & call object for the request
         IncidentV2Service client = retrofit.create(IncidentV2Service.class);
-        Call<LocationModel> call = client.updateLocation(locat2);
+        Call<LocationModel> call = client.createLocation(request);
 
         call.enqueue(new Callback<LocationModel>() {
             @Override
@@ -236,17 +306,6 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
         thread.start();
     }
 
-    @Override
-    public void onClick(View v) {
-
-        Log.d(TAG, "onLocationChanged: " + incV2Id.getText());
-
-        LocationModel locat1 = new LocationModel(battId.getText().toString(),Integer.parseInt(incV2Id.getText().toString())
-                ,latitudePosition.getText().toString(),longitudePosition.getText().toString(),false);
-        sendNetworkRequest(locat1);
-
-    }
-
     private class GeoCoderHandler extends Handler {
         @Override
         public void handleMessage(Message message) {
@@ -281,6 +340,7 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
             public void onResponse(Call<LocationModel> call, Response<LocationModel> response) {
 
                 Log.d(TAG, "onResponse: " + response.message());
+
 
             }
 

@@ -10,11 +10,22 @@ public class IncidentV2 {
     private String address;
     @SerializedName("battalionId")
     private String battalionId;
+    @SerializedName("number")
+    private String number;
 
-    public IncidentV2(int incidentV2Id, String address, String battalionId) {
+    public IncidentV2(int incidentV2Id, String address, String battalionId, String number) {
         this.incidentV2Id = incidentV2Id;
         this.address = address;
         this.battalionId = battalionId;
+        this.number = number;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
     }
 
     public int getIncidentV2Id() {
@@ -44,9 +55,10 @@ public class IncidentV2 {
     @Override
     public String toString() {
         return "IncidentV2{" +
-                "incidentV2Id='" + incidentV2Id + '\'' +
+                "incidentV2Id=" + incidentV2Id +
                 ", address='" + address + '\'' +
                 ", battalionId='" + battalionId + '\'' +
+                ", number='" + number + '\'' +
                 '}';
     }
 }

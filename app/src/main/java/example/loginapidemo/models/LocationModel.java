@@ -40,6 +40,13 @@ public class LocationModel {
         this.status = status;
     }
 
+    public LocationModel(int locationIncidentV2Id, String latitude, String longitude, boolean status) {
+        this.locationIncidentV2Id = locationIncidentV2Id;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.status = status;
+    }
+
     public int getLocationIncidentV2Id() {
         return locationIncidentV2Id;
     }
