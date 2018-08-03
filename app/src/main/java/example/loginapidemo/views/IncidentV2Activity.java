@@ -45,7 +45,7 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
     private static final String TAG = "IncidentV2Activity";
     private TextView latitudePosition;
     private TextView longitudePosition;
-    private TextView currentCity;
+    private TextView currentAddress;
     private LocationManager locationManager;
     private Location location;
     private final int REQUEST_LOCATION = 200;
@@ -67,7 +67,7 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
 
         latitudePosition = (TextView) findViewById(R.id.latitude);
         longitudePosition = (TextView) findViewById(R.id.longitude);
-        currentCity = (TextView) findViewById(R.id.city);
+        currentAddress = (TextView) findViewById(R.id.current_address);
         locationManager = (LocationManager) getSystemService(Service.LOCATION_SERVICE);
 //        locationSendButton = (Button) findViewById(R.id.button_location_send);
 
@@ -177,18 +177,14 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
             String incidentV2Number = getIntent().getStringExtra("number");
             String incidentV2Address = getIntent().getStringExtra("address");
 
-            setId(incidentV2Id, userBattalionId, incidentV2Number, incidentV2Address);
+            setId( incidentV2Number, incidentV2Address);
 
         }
     }
 
-    private void setId(int incidentV2Id, String userBattalionId, String incidentV2Number, String incidentV2Address) {
+    private void setId(String incidentV2Number, String incidentV2Address) {
 
-        incV2Id = (TextView) findViewById(R.id.incidentV2_id);
-        incV2Id.setText("" + incidentV2Id);
 
-        battId = (TextView) findViewById(R.id.user_battalion_id);
-        battId.setText("" + userBattalionId);
 
         incV2Number = (TextView) findViewById(R.id.incidentV2_number);
         incV2Number.setText("" + incidentV2Number);
@@ -318,7 +314,7 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
                 default:
                     result = null;
             }
-            currentCity.setText(result);
+            currentAddress.setText(result);
         }
     }
 
