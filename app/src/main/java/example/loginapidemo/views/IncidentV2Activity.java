@@ -188,7 +188,6 @@ public class IncidentV2Activity extends AppCompatActivity implements LocationLis
 
         incV2Number = (TextView) findViewById(R.id.incidentV2_number);
         incV2Number.setText("" + incidentV2Number);
-
         incV2Address = (TextView) findViewById(R.id.incidentV2_address);
         incV2Address.setText(""+ incidentV2Address);
 
